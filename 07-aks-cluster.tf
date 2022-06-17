@@ -1,28 +1,5 @@
-# Provision AKS Cluster
-/*
-1. Add Basic Cluster Settings
-  - Get Latest Kubernetes Version from datasource (kubernetes_version)
-  - Add Node Resource Group (node_resource_group)
-2. Add Default Node Pool Settings
-  - orchestrator_version (latest kubernetes version using datasource)
-  - availability_zones
-  - enable_auto_scaling
-  - max_count, min_count
-  - os_disk_size_gb
-  - type
-  - node_labels
-  - tags
-3. Enable MSI
-4. Add On Profiles 
-  - Azure Policy
-  - Azure Monitor (Reference Log Analytics Workspace id)
-5. RBAC & Azure AD Integration
-6. Admin Profiles
-  - Windows Admin Profile
-  - Linux Profile
-7. Network Profile
-8. Cluster Tags  
-*/
+  
+
 
 resource "azurerm_kubernetes_cluster" "aks_cluster" {
   name                = "${azurerm_resource_group.aks_rg.name}-cluster"
@@ -56,12 +33,12 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
    } 
   }
 
-# Identity (System Assigned or Service Principal)
+
   identity {
     type = "SystemAssigned"
   }
 
-# Add On Profiles
+# HERE WE ARE ADDING THE ANALYTICS SECTION
   addon_profile {
     azure_policy {enabled =  true}
     oms_agent {
@@ -79,13 +56,13 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     }
   }
 
-# Windows Profile
+
   windows_profile {
     admin_username = var.windows_admin_username
     admin_password = var.windows_admin_password
   }
 
-# Linux Profile
+
   linux_profile {
     admin_username = "ubuntu"
     ssh_key {
@@ -93,7 +70,7 @@ resource "azurerm_kubernetes_cluster" "aks_cluster" {
     }
   }
 
-# Network Profile
+#https://docs.microsoft.com/en-us/azure/aks/configure-azure-cni
   network_profile {
     network_plugin = "azure"
     load_balancer_sku = "Standard"
